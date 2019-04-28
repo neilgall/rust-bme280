@@ -2,6 +2,7 @@ extern crate i2cdev;
 
 use i2cdev::core::*;
 use i2cdev::linux::{LinuxI2CDevice, LinuxI2CError};
+use std::error::Error;
 use std::thread;
 use std::time::Duration;
 
@@ -21,6 +22,7 @@ pub struct Bme280Device {
 	dev: LinuxI2CDevice
 }
 
+#[derive(Debug)]
 pub struct Bme280Data {
 	pub temperature: f64,
 	pub humidity: f64,
@@ -108,7 +110,7 @@ fn compensate_humidity(cal2: &Vec<u8>, cal3: &Vec<u8>, data: &Vec<u8>, t_fine: f
 }
 
 impl Bme280Device {
-	pub fn new(device: &str, address: u16) -> Result<Bme280Device, LinuxI2CError> {
+	pub fn new(device: &str, address: u16) -> Result<Bme280Device, Box<Error>> {
 		let dev = LinuxI2CDevice::new(device, address)?;
 		Ok(Bme280Device { dev })
 	}
